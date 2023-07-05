@@ -225,21 +225,22 @@ public class MultiStepProgressDialog extends StandardDialog {
 			c.gridwidth = 1;
 			this.dlg.contentPane.add(label,c);
 			
-			c.weightx = 1;
-			c.gridwidth = isSkippable ? 1 : GridBagConstraints.REMAINDER;
-			this.dlg.contentPane.add(progressPanel,c);
-			
 			if (isSkippable) {
 				ButtonGroup bg = new ButtonGroup();
-				c.weightx = 0;
-				c.gridwidth = 1;
+//				c.weightx = 0;
+//				c.gridwidth = 1;
 				this.dlg.contentPane.add(btn1 = createToggleButton("Run" , true,  runByDefault, bg, e->{ setCanExec(true ); this.dlg.restartThread(); }),c);
-				c.gridwidth = GridBagConstraints.REMAINDER;
+//				c.gridwidth = GridBagConstraints.REMAINDER;
 				this.dlg.contentPane.add(btn2 = createToggleButton("Skip", true, !runByDefault, bg, e->{ setCanExec(false); this.dlg.restartThread(); }),c);
+				this.dlg.contentPane.add(new JLabel("   "),c);
 			} else {
 				btn1 = null;
 				btn2 = null;
 			}
+			
+			c.weightx = 1;
+			c.gridwidth = /* isSkippable ? 1 : */ GridBagConstraints.REMAINDER;
+			this.dlg.contentPane.add(progressPanel,c);
 		}
 	
 		private synchronized void setCanExec(boolean canExec) {
