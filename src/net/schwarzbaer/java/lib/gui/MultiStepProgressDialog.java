@@ -10,10 +10,12 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -36,6 +38,8 @@ public class MultiStepProgressDialog extends StandardDialog {
 	private boolean haveNoSkippableTask;
 	private JButton btnCancel;
 	private JButton btnOk;
+	private JCheckBox chkbxOK;
+	private boolean closeWhenAllFinished;
 
 	public MultiStepProgressDialog(Window parent, String title, int minWidth) {
 		super(parent,title);
@@ -51,6 +55,8 @@ public class MultiStepProgressDialog extends StandardDialog {
 		runningThread = null;
 		btnOk = null;
 		btnCancel = null;
+		chkbxOK = null;
+		closeWhenAllFinished = false;
 		
 		addWindowListener(new WindowAdapter() {
 			@Override public void windowOpened(WindowEvent e) {
@@ -74,6 +80,7 @@ public class MultiStepProgressDialog extends StandardDialog {
 		else
 			createGUI(
 				contentPane,
+				chkbxOK   = createCheckBox("Close when all finished", false, closeWhenAllFinished, b->{ closeWhenAllFinished=b; }),
 				btnOk     = createButton("Ok"    , true , e->{           closeDialog(); }),
 				btnCancel = createButton("Cancel", false, e->{ cancel(); closeDialog(); })
 			);
@@ -95,6 +102,7 @@ public class MultiStepProgressDialog extends StandardDialog {
 		
 		if (btnOk    !=null) btnOk    .setEnabled(false);
 		if (btnCancel!=null) btnCancel.setEnabled(true);
+		if (chkbxOK  !=null) chkbxOK  .setEnabled(true);
 		runningThread = singleThreadExecutor.submit(()->{
 			waitUntilDialogIsVisible();
 			boolean isFirstRun = true, allDone = true;
@@ -108,10 +116,11 @@ public class MultiStepProgressDialog extends StandardDialog {
 					else allDone = false;
 				}
 			}
-			if (allDone) SwingUtilities.invokeLater(this::closeDialog);
+			if (allDone || closeWhenAllFinished) SwingUtilities.invokeLater(this::closeDialog);
 			else SwingUtilities.invokeLater(()->{
 				if (btnOk    !=null) btnOk    .setEnabled(true);
 				if (btnCancel!=null) btnCancel.setEnabled(false);
+				if (chkbxOK  !=null) chkbxOK  .setEnabled(false);
 			});
 		});
 		currentThreadCancelListener = () -> runningThread.cancel(true);
@@ -162,6 +171,13 @@ public class MultiStepProgressDialog extends StandardDialog {
 
 	public static interface CancelListener {
 		public void cancelTask();
+	}
+
+	private static JCheckBox createCheckBox(String text, boolean enabled, boolean checked, Consumer<Boolean> setValue) {
+		JCheckBox comp = new JCheckBox(text,checked);
+		comp.setEnabled(enabled);
+		if (setValue!=null) comp.addActionListener(e->setValue.accept(comp.isSelected()));
+		return comp;
 	}
 
 	private static JButton createButton(String text, boolean enabled, ActionListener al) {
