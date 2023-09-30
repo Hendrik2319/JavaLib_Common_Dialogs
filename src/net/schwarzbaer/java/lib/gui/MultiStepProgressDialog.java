@@ -80,7 +80,7 @@ public class MultiStepProgressDialog extends StandardDialog {
 		else
 			createGUI(
 				contentPane,
-				chkbxOK   = createCheckBox("Close when all finished", false, closeWhenAllFinished, b->{ closeWhenAllFinished=b; }),
+				chkbxOK   = createCheckBox("Close dialog when all finished", false, closeWhenAllFinished, b->{ closeWhenAllFinished=b; }),
 				btnOk     = createButton("Ok"    , true , e->{           closeDialog(); }),
 				btnCancel = createButton("Cancel", false, e->{ cancel(); closeDialog(); })
 			);
