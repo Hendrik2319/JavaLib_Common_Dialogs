@@ -28,7 +28,7 @@ public class ProgressDialog extends StandardDialog implements ProgressView {
 		runWithProgressDialog(parent, title, minWidth, false, useProgressDialog);
 	}
 	public static void runWithProgressDialog(Window parent, String title, int minWidth, boolean allowSwitchToBackground, Consumer<ProgressDialog> useProgressDialog) {
-		new ProgressDialogWrapper<Object>()
+		new ProgressDialogWrapper<>()
 				.runWithProgressDialog(parent, title, minWidth, allowSwitchToBackground, pd->{ useProgressDialog.accept(pd); return null; });
 	}
 	public static <ReturnValue> ReturnValue runWithProgressDialogRV(Window parent, String title, int minWidth, Function<ProgressDialog,ReturnValue> useProgressDialog) {
