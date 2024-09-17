@@ -23,17 +23,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class StandardDialog extends JDialog implements WindowListener {
-	private static final long serialVersionUID = -2236026007551538954L;
+	private   static final long serialVersionUID = -2236026007551538954L;
+	protected static final boolean      DEFAULT__REPEATED_USE_OF_DIALOG_OBJECT = true;
+	protected static final ModalityType DEFAULT__MODALITY_TYPE = Dialog.ModalityType.APPLICATION_MODAL;
 	
 	private Window parent;
 	private boolean repeatedUseOfDialogObject; 
 	
 	public StandardDialog( Window parent, String title ) {
-		this(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		this(parent, title, DEFAULT__MODALITY_TYPE);
 	}
 	
 	public StandardDialog( Window parent, String title, ModalityType modality ) {
-		this(parent, title, modality, true);
+		this(parent, title, modality, DEFAULT__REPEATED_USE_OF_DIALOG_OBJECT);
 	}
 	
 	public StandardDialog( Window parent, String title, ModalityType modality, boolean repeatedUseOfDialogObject ) {
@@ -153,5 +155,4 @@ public class StandardDialog extends JDialog implements WindowListener {
 		RIGHT_OF_PARENT,
 		BELOW_PARENT
 	}
-    
 }
